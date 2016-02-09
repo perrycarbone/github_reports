@@ -16,6 +16,18 @@ module Reports
       IRB.start
     end
 
+    desc "user_info USERNAME", "Get info for a user"
+    def user_info(username)
+      puts "Getting user info for #{username}..."
+
+      client = GitHubAPIClient.new
+      user = client.user_info
+
+      puts "name: #{user["name"]}"
+      puts "location: #{user["location"]}"
+      puts "public repos: #{user["public_repos"]}"
+    end
+
     private
 
     def client
