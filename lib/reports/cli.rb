@@ -21,7 +21,7 @@ module Reports
       puts "Getting user info for #{username}..."
 
       client = GitHubAPIClient.new
-      user = client.user_info
+      user = client.user_info(username)
 
       puts "name: #{user["name"]}"
       puts "location: #{user["location"]}"
