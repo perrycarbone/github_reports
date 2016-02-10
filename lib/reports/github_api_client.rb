@@ -21,7 +21,7 @@ module Reports
     end
 
     def user_info(username)
-      headers = {"Authorization" => 'token #{@token}'}
+      headers = {"Authorization" => "token #{@token}"}
       url = "https://api.github.com/users/#{username}"
 
       start_time = Time.now
@@ -40,6 +40,21 @@ module Reports
 
       data = JSON.parse(response.body)
       User.new(data["name"], data["location"], data["public_repos"])
+    end
+
+    Repo = Struct.new(:name, :url)
+
+    def public_repos_for_user(username)
+      headers = {"Authorization" => "token #{@token}"}
+      url = "https://api.github.com/users/#{username}/repos"
+
+      start_time = Time.now
+      response = Faraday.get url
+      duration = Time.now - start_time
+
+      @logger.debug "-> %s %s %d (%.3f s)" % [url, 'GET', response.status, duration]
+      data = JSON.parse(response.body)
+      data.map { |repo_data| Repo.new(repo_data['full_name'], repo_data['url'])}
     end
   end
 end

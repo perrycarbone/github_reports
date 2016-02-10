@@ -33,6 +33,18 @@ module Reports
       exit 1
     end
 
+    desc "public_repos_for_user USERNAME", "Get public repos for a user"
+    def public_repos_for_user(username)
+      puts "Getting public repos for #{username}..."
+
+      client = GitHubAPIClient.new(ENV['GITHUB_TOKEN'])
+      repos = client.public_repos_for_user(username)
+
+      repos.each do |repo|
+        puts "#{repo["name"]} - #{repo["url"]}"
+      end
+    end
+
     private
 
     def client
