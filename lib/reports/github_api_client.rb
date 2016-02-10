@@ -4,11 +4,15 @@ require 'logger'
 
 module Reports
 
-  class NonexistantUser < StandardError; end
+  class Error < StandardError; end
+  class NonexistantUser < Error; end
+  class RequestFailure < Error; end
 
   User = Struct.new(:name, :location, :public_repos)
 
   class GitHubAPIClient
+    VALID_STATUS_CODES = [200, 302, 403, 422]
+
     def initialize
       @logger = Logger.new(STDOUT)
       @logger.formatter = proc { |severity, datetime, program, message| message + "\n" }
@@ -25,6 +29,8 @@ module Reports
 
       if response.status == 404
         raise NonexistantUser, "'#{username}' does not exist."
+      elsif !VALID_STATUS_CODES.include?(response.status)
+        raise RequestFailure, JSON.parse(response.body)["message"]
       end
 
       data = JSON.parse(response.body)

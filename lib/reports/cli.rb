@@ -27,7 +27,7 @@ module Reports
       puts "location: #{user["location"]}"
       puts "public repos: #{user["public_repos"]}"
 
-    rescue NonexistantUser => e
+    rescue Error => e
       puts "ERROR #{e.message}"
       exit 1
     end
